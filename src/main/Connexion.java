@@ -47,7 +47,7 @@ public class Connexion extends JFrame {
 	
 	/**
 	 * Validates an email address using a regex pattern.
-	 * 
+	 * Commentaire JavaDoc
 	 * @param email The email address to validate.
 	 * @return true if the email is valid, false otherwise.
 	 */
@@ -62,12 +62,11 @@ public class Connexion extends JFrame {
     
  // Méthode pour valider le mot de passe
     static boolean isValidPassword(String password) {
-        String regex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()\\-_=+<>?]).{12,}$";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(password);
-        return matcher.matches();
+    String regex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()\\-_=+<>?]).{12,}$";
+    Pattern pattern = Pattern.compile(regex);
+    Matcher matcher = pattern.matcher(password);
+    return matcher.matches();
     }
-    
     /**
 	 * Hashes a password using SHA-256.
 	 * 
