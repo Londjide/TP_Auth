@@ -81,12 +81,11 @@ public class Admin<rs> {
 	 }
 	 
 	 
-	 
 	 /*
 	  * 
-	  *  Derniere version de la mise a jour de l'administration
+	  * 
+	  * Latest version of Admin
 	  */
-	 
 	 
 	/**
 	 * Initialize the contents of the frame.
