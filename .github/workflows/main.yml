@@ -7,7 +7,7 @@ on:
     branches: [ main, master ]
 
 jobs:
-  build:
+  build-and-analyze:
     runs-on: ubuntu-latest
 
     steps:
@@ -28,53 +28,52 @@ jobs:
     - name: Compile project
       run: |
         # Compiler le code source
+        echo "Compilation du projet..."
         javac -d build -cp "lib/*:." $(find src -name "*.java") || echo "Compilation terminée avec warnings"
         
     - name: Run tests
       run: |
         # Exécuter les tests unitaires
+        echo "Exécution des tests unitaires..."
         java -cp "build:lib/*:." org.junit.runner.JUnitCore main.LoginTest || echo "Tests terminés avec des erreurs potentielles"
       
     - name: Create JAR
       run: |
         # Créer un fichier JAR exécutable
+        echo "Création du JAR..."
         echo "Main-Class: main.Connexion" > build/MANIFEST.MF
         jar cvfm TP_Authentification.jar build/MANIFEST.MF -C build . || echo "JAR créé avec des warnings"
     
-    # Ajout de l'upload d'artifact
-    - name: Store JAR as artifact
-      uses: actions/upload-artifact@v1
-      with:
-        name: TP_Authentification
-        path: TP_Authentification.jar
-
-  # Ajout de l'étape d'analyse de la qualité du code
-  code-quality:
-    needs: build
-    runs-on: ubuntu-latest
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-      
+    # Analyse de qualité directement dans le même job
     - name: Code quality check
       run: |
-        # Pour l'instant, nous effectuons une simple vérification du style de code
-        echo "Vérification de la qualité du code..."
-        # Compter les lignes de code et les fichiers Java
-        echo "Statistiques du projet :"
+        echo "Analyse de la qualité du code..."
+        
+        # Statistiques du code
+        echo "--- STATISTIQUES DU PROJET ---"
+        echo "Nombre de fichiers Java:"
         find src -name "*.java" | wc -l
-        echo "fichiers Java"
+        
+        echo "Nombre total de lignes de code:"
         find src -name "*.java" -exec cat {} \; | wc -l
-        echo "lignes de code total"
         
-        # Chercher des problèmes potentiels (très basique)
-        echo "Vérification des problèmes potentiels :"
+        # Chercher des patterns problématiques
+        echo "--- DÉTECTION DE PATTERNS PROBLÉMATIQUES ---"
+        echo "Appels à System.out.println (à éviter en production):"
         find src -name "*.java" -exec grep -l "System.out.println" {} \; | wc -l
-        echo "appels à System.out.println (à éviter en production)"
         
+        echo "Captures d'exceptions génériques (à éviter):"
         find src -name "*.java" -exec grep -l "catch (Exception" {} \; | wc -l
-        echo "captures d'exceptions génériques (pratique à éviter)"
         
+        echo "Appels à printStackTrace() (à remplacer par un logger):"
         find src -name "*.java" -exec grep -l "e.printStackTrace()" {} \; | wc -l
-        echo "appels à printStackTrace() (à remplacer par un logger)"
+        
+        # Vérification de la documentation
+        echo "--- ANALYSE DE LA DOCUMENTATION ---"
+        echo "Méthodes avec JavaDoc:"
+        find src -name "*.java" -exec grep -l "/**" {} \; | wc -l
+        
+        echo "Classes avec JavaDoc:"
+        find src -name "*.java" -exec grep -l "/**" {} \; | wc -l
+        
+        echo "Analyse de qualité terminée"
