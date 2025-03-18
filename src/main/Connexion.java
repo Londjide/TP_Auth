@@ -47,7 +47,7 @@ public class Connexion extends JFrame {
 	
 	/**
 	 * Validates an email address using a regex pattern.
-	 * 
+	 * Commentaire JavaDoc
 	 * @param email The email address to validate.
 	 * @return true if the email is valid, false otherwise.
 	 */

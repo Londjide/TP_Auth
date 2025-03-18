@@ -34,7 +34,7 @@ public class Admin<rs> {
 	private JComboBox<Integer> SearchID; // Declare SearchID as a class-level variable
 
 	/**
-	 * Launch the application.
+	 * Commentaire JavaDoc
 	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
