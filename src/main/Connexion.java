@@ -59,15 +59,6 @@ public class Connexion extends JFrame {
         Matcher matcher = pattern.matcher(email);
         return matcher.matches();
     }
-    
-// // Méthode pour valider le mot de passe
-//    static boolean isValidPassword(String password) {
-//        String regex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()\\-_=+<>?]).{12,}$";
-//        Pattern pattern = Pattern.compile(regex);
-//        Matcher matcher = pattern.matcher(password);
-//        return matcher.matches();
-//    }
-    
     /**
 	 * Hashes a password using SHA-256.
 	 * 
