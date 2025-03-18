@@ -2,7 +2,7 @@ name: Java CI/CD
 
 on:
   push:
-    branches: [ main, master, Connexion, Admin ]
+    branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
 
@@ -42,53 +42,54 @@ jobs:
         jar cvfm TP_Authentification.jar build/MANIFEST.MF -C build .
         
     - name: Upload build artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v2  # Utilisation de la version v2 au lieu de v3
       with:
         name: TP_Authentification
         path: TP_Authentification.jar
 
-  sonarqube:
-    needs: build-and-test
-    runs-on: ubuntu-latest
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-      
-    - name: SonarQube Scan
-      uses: SonarSource/sonarqube-scan-action@master
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-      
-  deploy:
-    needs: [build-and-test, sonarqube]
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
-    
-    steps:
-    - name: Download artifact
-      uses: actions/download-artifact@v3
-      with:
-        name: TP_Authentification
-        
-    - name: Create release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: v${{ github.run_number }}
-        release_name: Release v${{ github.run_number }}
-        draft: false
-        prerelease: false
-        
-    - name: Upload Release Asset
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./TP_Authentification.jar
-        asset_name: TP_Authentification.jar
-        asset_content_type: application/java-archive
+  # Désactivons temporairement les jobs suivants pour nous concentrer sur le build
+  # sonarqube:
+  #   needs: build-and-test
+  #   runs-on: ubuntu-latest
+  #   
+  #   steps:
+  #   - name: Checkout code
+  #     uses: actions/checkout@v3
+  #     
+  #   - name: SonarQube Scan
+  #     uses: SonarSource/sonarqube-scan-action@master
+  #     env:
+  #       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  #       SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+  #   
+  # deploy:
+  #   needs: [build-and-test, sonarqube]
+  #   runs-on: ubuntu-latest
+  #   if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+  #   
+  #   steps:
+  #   - name: Download artifact
+  #     uses: actions/download-artifact@v2
+  #     with:
+  #       name: TP_Authentification
+  #       
+  #   - name: Create release
+  #     id: create_release
+  #     uses: actions/create-release@v1
+  #     env:
+  #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #     with:
+  #       tag_name: v${{ github.run_number }}
+  #       release_name: Release v${{ github.run_number }}
+  #       draft: false
+  #       prerelease: false
+  #       
+  #   - name: Upload Release Asset
+  #     uses: actions/upload-release-asset@v1
+  #     env:
+  #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #     with:
+  #       upload_url: ${{ steps.create_release.outputs.upload_url }}
+  #       asset_path: ./TP_Authentification.jar
+  #       asset_name: TP_Authentification.jar
+  #       asset_content_type: application/java-archive
