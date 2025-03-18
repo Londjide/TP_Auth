@@ -1,14 +1,14 @@
-name: Java CI/CD Pipeline
+name: Java CI/CD Pipeline (Windows)
 
 on:
   push:
-    branches: [ main, master, Admin, Connexion, Inscription ]
+    branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -21,30 +21,26 @@ jobs:
         
     - name: Create directories
       run: |
-        mkdir -p build
-        mkdir -p build/main
+        mkdir build
+        mkdir build\main
+      shell: cmd
         
     - name: Compile project
       run: |
         echo "Compilation du projet..."
-        javac -d build -cp "lib/*:." $(find src -name "*.java") || echo "Compilation terminée avec warnings"
+        javac -d build -cp "lib\*;." src\main\*.java
+      shell: cmd
         
     - name: Create JAR
       run: |
         echo "Création du JAR..."
-        echo "Main-Class: main.Connexion" > build/MANIFEST.MF
-        jar cvfm TP_Authentification.jar build/MANIFEST.MF -C build . || echo "JAR créé avec warnings"
-    
-    # Nous stockons les fichiers pour les autres jobs sans utiliser upload-artifact
-    - name: Save build files
-      run: |
-        mkdir -p /tmp/build-output
-        cp -r build /tmp/build-output/
-        cp TP_Authentification.jar /tmp/build-output/
+        echo Main-Class: main.Connexion > build\MANIFEST.MF
+        jar cvfm TP_Authentification.jar build\MANIFEST.MF -C build .
+      shell: cmd
   
   test:
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -57,24 +53,27 @@ jobs:
     
     - name: Recreate build directory
       run: |
-        mkdir -p build
-        mkdir -p build/main
-        javac -d build -cp "lib/*:." $(find src -name "*.java") || echo "Compilation terminée"
+        mkdir build
+        mkdir build\main
+        javac -d build -cp "lib\*;." src\main\*.java
+      shell: cmd
     
     - name: Run unit tests
       run: |
         echo "Exécution des tests unitaires..."
-        java -cp "build:lib/*:." org.junit.runner.JUnitCore main.LoginTest || echo "Tests terminés avec des erreurs potentielles"
+        java -cp "build;lib\*;." org.junit.runner.JUnitCore main.LoginTest
+      shell: cmd
     
     - name: Test summary
       run: |
         echo "=== RÉSUMÉ DES TESTS ==="
         echo "Tests exécutés : LoginTest"
         echo "Note: Dans un environnement réel, nous utiliserions un framework comme JUnit ou TestNG avec des rapports détaillés."
+      shell: cmd
 
   code-analysis:
     needs: test
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -83,32 +82,27 @@ jobs:
       run: |
         echo "=== ANALYSE STATIQUE DU CODE ==="
         
-        # Statistiques du code
         echo "--- STATISTIQUES DU PROJET ---"
         echo "Nombre de fichiers Java:"
-        find src -name "*.java" | wc -l
+        dir /B /S src\*.java | find /c ":"
         
-        echo "Nombre total de lignes de code:"
-        find src -name "*.java" -exec cat {} \; | wc -l
+        echo "Contenu des fichiers Java:"
+        dir /B /S src\*.java
         
-        # Chercher des patterns problématiques
         echo "--- DÉTECTION DE PATTERNS PROBLÉMATIQUES ---"
         echo "Appels à System.out.println (à éviter en production):"
-        find src -name "*.java" -exec grep -l "System.out.println" {} \; | wc -l
+        findstr /S /M "System.out.println" src\*.java | find /c ":"
         
         echo "Captures d'exceptions génériques (à éviter):"
-        find src -name "*.java" -exec grep -l "catch (Exception" {} \; | wc -l
+        findstr /S /M "catch (Exception" src\*.java | find /c ":"
         
         echo "Appels à printStackTrace() (à remplacer par un logger):"
-        find src -name "*.java" -exec grep -l "e.printStackTrace()" {} \; | wc -l
+        findstr /S /M "printStackTrace()" src\*.java | find /c ":"
         
-        # Vérification de la documentation
         echo "--- ANALYSE DE LA DOCUMENTATION ---"
-        echo "Méthodes avec JavaDoc:"
-        find src -name "*.java" -exec grep -l "/**" {} \; | wc -l
-        
-        echo "Classes avec JavaDoc:"
-        find src -name "*.java" -exec grep -l "/**" {} \; | wc -l
+        echo "Méthodes et classes avec JavaDoc:"
+        findstr /S /M "/**" src\*.java | find /c ":"
+      shell: cmd
     
     - name: Security check
       run: |
@@ -116,16 +110,17 @@ jobs:
         
         echo "Recherche de vulnérabilités potentielles..."
         echo "Utilisation de chaînes de connexion en dur:"
-        find src -name "*.java" -exec grep -l "jdbc:sqlite" {} \; | wc -l
+        findstr /S /M "jdbc:sqlite" src\*.java | find /c ":"
         
         echo "Mots de passe en clair:"
-        find src -name "*.java" -exec grep -l "password.*=\"" {} \; | wc -l
+        findstr /S /M "password.*=\"" src\*.java | find /c ":"
         
         echo "Note: Dans un environnement réel, nous utiliserions des outils comme SonarQube, PMD, FindBugs ou SpotBugs."
+      shell: cmd
 
   generate-documentation:
     needs: code-analysis
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -139,18 +134,20 @@ jobs:
     - name: Generate JavaDoc
       run: |
         echo "=== GÉNÉRATION DE LA DOCUMENTATION ==="
-        mkdir -p docs
-        javadoc -d docs -sourcepath src -subpackages main || echo "JavaDoc généré avec des warnings"
+        mkdir docs
+        javadoc -d docs -sourcepath src -subpackages main
         echo "Documentation générée dans le dossier docs/"
+      shell: cmd
     
     - name: Documentation summary
       run: |
         echo "Documentation générée pour les classes:"
-        find src -name "*.java" | sed 's/src\///' | sed 's/\.java//' | sed 's/\//./g'
+        dir /B /S src\*.java | findstr /R "\.java$" 
+      shell: cmd
 
   deployment-simulation:
     needs: [test, code-analysis, generate-documentation]
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
     steps:
     - name: Checkout code
@@ -164,33 +161,36 @@ jobs:
     
     - name: Recreate JAR
       run: |
-        mkdir -p build
-        javac -d build -cp "lib/*:." $(find src -name "*.java") || echo "Compilation terminée"
-        echo "Main-Class: main.Connexion" > build/MANIFEST.MF
-        jar cvfm TP_Authentification.jar build/MANIFEST.MF -C build . || echo "JAR créé"
+        mkdir build
+        javac -d build -cp "lib\*;." src\main\*.java
+        echo Main-Class: main.Connexion > build\MANIFEST.MF
+        jar cvfm TP_Authentification.jar build\MANIFEST.MF -C build .
+      shell: cmd
     
     - name: Simulate deployment
       run: |
         echo "=== SIMULATION DE DÉPLOIEMENT ==="
-        echo "Préparation de l'environnement..."
-        echo "Copie du JAR vers le serveur..."
-        echo "Redémarrage du service..."
+        echo "Préparation de l'environnement Windows..."
+        echo "Copie du JAR vers le serveur Windows..."
+        echo "Redémarrage du service Windows..."
         echo "Déploiement simulé avec succès!"
         
-        echo "Note: Dans un environnement réel, nous déploierions sur un serveur de test ou de production."
+        echo "Note: Dans un environnement réel, nous déploierions sur un serveur Windows."
+      shell: cmd
     
     - name: Create release notes
       run: |
-        echo "=== NOTES DE RELEASE ===" > release_notes.txt
-        echo "Version: $(date +'%Y.%m.%d')" >> release_notes.txt
-        echo "Date: $(date +'%d/%m/%Y')" >> release_notes.txt
-        echo "Commit: ${{ github.sha }}" >> release_notes.txt
-        echo "" >> release_notes.txt
-        echo "Changements inclus dans cette version:" >> release_notes.txt
-        echo "- Améliorations générales" >> release_notes.txt
-        echo "- Corrections de bugs" >> release_notes.txt
-        echo "- Nouvelles fonctionnalités" >> release_notes.txt
-        echo "" >> release_notes.txt
-        echo "Notes de release générées automatiquement par le pipeline CI/CD." >> release_notes.txt
+        echo === NOTES DE RELEASE === > release_notes.txt
+        echo Version: %date:~6,4%.%date:~3,2%.%date:~0,2% >> release_notes.txt
+        echo Date: %date% >> release_notes.txt
+        echo Commit: ${{ github.sha }} >> release_notes.txt
+        echo. >> release_notes.txt
+        echo Changements inclus dans cette version: >> release_notes.txt
+        echo - Améliorations générales >> release_notes.txt
+        echo - Corrections de bugs >> release_notes.txt
+        echo - Nouvelles fonctionnalités >> release_notes.txt
+        echo. >> release_notes.txt
+        echo Notes de release générées automatiquement par le pipeline CI/CD Windows. >> release_notes.txt
         
-        cat release_notes.txt
+        type release_notes.txt
+      shell: cmd
