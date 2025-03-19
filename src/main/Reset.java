@@ -17,6 +17,14 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.awt.event.ActionEvent;
 
+/**
+ * Classe gérant la première étape de réinitialisation de mot de passe.
+ * Permet à l'utilisateur de demander un mot de passe temporaire
+ * en fournissant son adresse email.
+ * 
+ * @author Equipe de développement
+ * @version 1.0
+ */
 public class Reset  {
 
 	private JFrame frame;
@@ -24,7 +32,9 @@ public class Reset  {
 
 	
 	/**
-	 * Launch the application.
+	 * Lance l'application de réinitialisation de mot de passe.
+	 * 
+	 * @param args Arguments de ligne de commande (non utilisés)
 	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -40,11 +50,16 @@ public class Reset  {
 	}
 
 	/**
-	 * Create the application.
+	 * URL de connexion à la base de données SQLite.
 	 */
 	private static final String DB_URL = "jdbc:sqlite:users.db";
 	
 	
+	/**
+	 * Établit une connexion à la base de données.
+	 * 
+	 * @return Objet Connection pour interagir avec la base de données
+	 */
 	public static Connection connect( ) {
 		 
 		 Connection conn = null;
@@ -61,12 +76,17 @@ public class Reset  {
 		 return conn;
 	 }
 	
+	/**
+	 * Constructeur de la classe Reset.
+	 * Initialise l'interface utilisateur de réinitialisation.
+	 */
 	public Reset() {
 		initialize();
 	}
 
 	/**
-	 * Initialize the contents of the frame.
+	 * Initialise les composants de l'interface utilisateur.
+	 * Configure la fenêtre pour la saisie de l'email.
 	 */
 	private void initialize() {
 		frame = new JFrame();
@@ -100,6 +120,10 @@ public class Reset  {
 		frame.getContentPane().add(btnNewButton);
 	}
 	
+	/**
+	 * Réinitialise le mot de passe de l'utilisateur.
+	 * Génère un mot de passe temporaire et l'enregistre dans la base de données.
+	 */
 	private void resetPassword() {
         String email = textField.getText().trim();
 
@@ -135,6 +159,13 @@ public class Reset  {
         }
     }
 
+    /**
+     * Génère un mot de passe temporaire aléatoire.
+     * Crée une chaîne de 8 caractères incluant des lettres majuscules et minuscules,
+     * des chiffres et des caractères spéciaux.
+     * 
+     * @return Un mot de passe temporaire aléatoire
+     */
     private String generateTempPassword() {
         String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%";
         SecureRandom random = new SecureRandom();
@@ -147,6 +178,13 @@ public class Reset  {
         return tempPassword.toString();
     }
     
+    /**
+     * Crée un hachage SHA-256 du mot de passe fourni.
+     * Sécurise le stockage des mots de passe dans la base de données.
+     * 
+     * @param password Le mot de passe à hacher
+     * @return Le mot de passe haché sous forme de chaîne hexadécimale
+     */
     private String hashPassword(String password) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
@@ -161,6 +199,10 @@ public class Reset  {
         }
 }
     
+    /**
+     * Rend la fenêtre de réinitialisation visible.
+     * Méthode utilisée pour afficher la fenêtre après son initialisation.
+     */
     public void afficher() {
 
 		frame.setVisible(true);

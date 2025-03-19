@@ -14,6 +14,14 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * Classe de test pour les fonctionnalités d'administration.
+ * Teste les opérations CRUD sur les utilisateurs et la sécurité.
+ * Utilise JUnit pour automatiser les tests.
+ * 
+ * @author Equipe de développement
+ * @version 1.0
+ */
 public class AdminTest {
 	private static final String TEST_DB_URL = "jdbc:sqlite:test_users.db";
     private static Connection conn;

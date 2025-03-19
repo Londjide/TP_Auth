@@ -26,6 +26,15 @@ import javax.swing.JRadioButton;
 import javax.swing.JComboBox;
 import javax.swing.JPasswordField;
 
+/**
+ * Classe d'administration du système d'authentification.
+ * Permet la gestion des utilisateurs (création, modification, suppression).
+ * Fournit une interface graphique pour administrer les comptes utilisateurs.
+ * 
+ * @author Equipe de développement
+ * @version 1.0
+ * @param <rs> Type paramétré utilisé pour les résultats de requêtes
+ */
 public class Admin<rs> {
 
 	private JFrame frame;
@@ -34,7 +43,10 @@ public class Admin<rs> {
 	private JComboBox<Integer> SearchID; // Declare SearchID as a class-level variable
 
 	/**
-	 * Commentaire JavaDoc
+	 * Point d'entrée principal de l'application d'administration.
+	 * Lance l'interface graphique d'administration.
+	 * 
+	 * @param args Arguments de ligne de commande (non utilisés)
 	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -50,7 +62,8 @@ public class Admin<rs> {
 	}
 
 	/**
-	 * Create the application.
+	 * Constructeur de la classe Admin.
+	 * Initialise l'interface utilisateur et configure la table.
 	 */
 	public Admin() {
 		initialize();
@@ -61,9 +74,17 @@ public class Admin<rs> {
 		
 	}
 	
+	/**
+	 * URL de connexion à la base de données SQLite contenant les utilisateurs.
+	 */
 	 private static final String DB_URL = "jdbc:sqlite:users.db";
 	 private JPasswordField passwordField;
 
+	 /**
+	  * Établit une connexion à la base de données.
+	  * 
+	  * @return Objet Connection pour interagir avec la base de données
+	  */
 	 public static Connection connect( ) {
 		 
 		 Connection conn = null;
@@ -84,12 +105,16 @@ public class Admin<rs> {
 	 
 	 
 	/**
-	 * Initialize the contents of the frame.
-	 * 
+	 * Initialise les composants de l'interface utilisateur d'administration.
+	 * Configure la fenêtre principale, les boutons et la table d'utilisateurs.
 	 */
 	 
 	 
 
+	   /**
+	    * Crée la table 'users' dans la base de données si elle n'existe pas.
+	    * La table stocke les identifiants, emails et mots de passe des utilisateurs.
+	    */
 	   private static void createTable() {
 	       try (Connection conn = DriverManager.getConnection(DB_URL);
 	            Statement stmt = conn.createStatement()) {
@@ -101,7 +126,13 @@ public class Admin<rs> {
 	   }
 	   
 	   
-	// Méthode pour valider le mot de passe
+	/**
+	 * Valide un mot de passe selon des critères de sécurité.
+	 * Vérifie la présence de majuscules, minuscules, chiffres et caractères spéciaux.
+	 * 
+	 * @param password Le mot de passe à valider
+	 * @return true si le mot de passe est valide, false sinon
+	 */
 	    static boolean isValidPassword(String password) {
 	        String regex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()\\-_=+<>?]).{12,}$";
 	        Pattern pattern = Pattern.compile(regex);
@@ -110,12 +141,12 @@ public class Admin<rs> {
 	    }
 	    
 	    /**
+	     * Valide le format d'une adresse email.
+	     * Utilise une expression régulière pour vérifier que l'email est bien formé.
 	     * 
-	     * @param email
-	     * @return
+	     * @param email L'adresse email à valider
+	     * @return true si l'email est valide, false sinon
 	     */
-	    
-	    // Methode pour valider l'email
 	    static boolean isValidEmail(String email) {
 	        String regex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
 	        Pattern pattern = Pattern.compile(regex);
@@ -125,6 +156,10 @@ public class Admin<rs> {
 
 	 
 	 
+	/**
+	 * Initialise l'interface utilisateur d'administration.
+	 * Configure les composants, la disposition et les gestionnaires d'événements.
+	 */
 	private void initialize() {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 754, 502);
@@ -395,7 +430,10 @@ public class Admin<rs> {
 		frame.getContentPane().add(passwordField);
 	}
 	
-	// Method to populate JTable with data from SQLite database
+	/**
+	 * Remplit la table avec les utilisateurs enregistrés dans la base de données.
+	 * Affiche les identifiants et emails des utilisateurs.
+	 */
     private void populateTable() {
         DefaultTableModel model = new DefaultTableModel();
         table.setModel(model);
@@ -426,7 +464,10 @@ public class Admin<rs> {
     }
     }
     
-    // Method to populate JComboBox with user IDs
+    /**
+     * Remplit la liste déroulante avec les identifiants des utilisateurs.
+     * Permet de sélectionner un utilisateur à modifier ou supprimer.
+     */
     private void populateComboBox() {
         try (Connection conn = DriverManager.getConnection(DB_URL);
              Statement stmt = conn.createStatement();
@@ -443,6 +484,13 @@ public class Admin<rs> {
     
     
     
+	/**
+	 * Crée un hachage SHA-256 du mot de passe fourni.
+	 * Sécurise le stockage des mots de passe dans la base de données.
+	 * 
+	 * @param password Le mot de passe à hacher
+	 * @return Le mot de passe haché sous forme de chaîne hexadécimale
+	 */
     private String hashPassword(String password) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
@@ -457,6 +505,10 @@ public class Admin<rs> {
         }
     }
     
+    /**
+     * Rend la fenêtre d'administration visible.
+     * Méthode utilisée pour afficher la fenêtre après son initialisation.
+     */
     public void afficher() {
 
 		frame.setVisible(true);

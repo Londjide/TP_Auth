@@ -36,23 +36,32 @@ import com.jtattoo.plaf.smart.SmartLookAndFeel; // Choose any theme
 
 //import Design.Inscription;
 
+/**
+ * Classe de gestion de l'authentification des utilisateurs.
+ * Permet aux utilisateurs de se connecter à l'application avec leur email et mot de passe.
+ * Vérifie les identifiants par rapport à la base de données SQLite.
+ * 
+ * @author Equipe de développement
+ * @version 1.0
+ */
 @SuppressWarnings("unused")
 public class Connexion extends JFrame {
 
+	/** Fenêtre principale de l'interface de connexion */
 	private JFrame frame;
+	/** Champ de saisie pour l'adresse email de l'utilisateur */
 	private JTextField usernameField;
+	/** Champ de saisie sécurisé pour le mot de passe de l'utilisateur */
 	private JPasswordField passwordField;
 	
 	
 	
 	/**
 	 * Validates an email address using a regex pattern.
-	 * Commentaire JavaDoc
+	 * 
 	 * @param email The email address to validate.
 	 * @return true if the email is valid, false otherwise.
 	 */
-	
-	
     static boolean isValidEmail(String email) {
         String regex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
         Pattern pattern = Pattern.compile(regex);
@@ -60,13 +69,20 @@ public class Connexion extends JFrame {
         return matcher.matches();
     }
     
- // Méthode pour valider le mot de passe
+	/**
+	 *  Validates an password using regex pattern.
+	 *  
+	 * @param Password The Password to validate.
+	 * @return true if the Password is valid, false otherwise. 
+	 */
     static boolean isValidPassword(String password) {
-    String regex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()\\-_=+<>?]).{12,}$";
-    Pattern pattern = Pattern.compile(regex);
-    Matcher matcher = pattern.matcher(password);
-    return matcher.matches();
+    	
+        String regex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()\\-_=+<>?]).{12,}$";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(password);
+        return matcher.matches();
     }
+    
     /**
 	 * Hashes a password using SHA-256.
 	 * 
@@ -95,10 +111,10 @@ public class Connexion extends JFrame {
     
     
     /**
-	 * Hashes a password using SHA-256.
+	 * Main method to launch the application.
+	 * Creates and displays the login window.
 	 * 
-	 * @param password The password to hash.
-	 * @return The hashed password as a hexadecimal string.
+	 * @param args Command line arguments (not used)
 	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -117,13 +133,19 @@ public class Connexion extends JFrame {
 	}
 
 	/**
-	 * Create the application.
+	 * Constructor for the Connexion class.
+	 * Initializes the UI components.
 	 */
 	public Connexion() {
 		initialize();
 	}
 	
 	
+	 /**
+	 * Establishes a connection to the SQLite database.
+	 * 
+	 * @return A Connection object to the database
+	 */
 	 private static final String DB_URL = "jdbc:sqlite:users.db";
 
 	 public static Connection connect( ) {
@@ -144,7 +166,8 @@ public class Connexion extends JFrame {
 	 
 
 	/**
-	 * Initialize the contents of the frame.
+	 * Initializes the UI components and sets up event listeners.
+	 * Creates the login form with fields for email and password.
 	 */
 	private void initialize() {
 		frame = new JFrame();
@@ -276,6 +299,10 @@ public class Connexion extends JFrame {
 		frame.getContentPane().add(btnReinitialisation);
 	}
 	
+	/**
+	 * Makes the login window visible.
+	 * Used to display the window after initialization.
+	 */
 	public void afficher() {
 
 		frame.setVisible(true);

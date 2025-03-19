@@ -4,8 +4,21 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+/**
+ * Classe de test pour la fonctionnalité de connexion.
+ * Teste les méthodes de validation d'email et de mot de passe.
+ * Utilise JUnit pour automatiser les tests.
+ * 
+ * @author Equipe de développement
+ * @version 1.0
+ */
 public class LoginTest {
 
+	 /**
+     * Teste la validation d'email avec différents formats.
+     * Vérifie que les formats valides sont acceptés et 
+     * que les formats invalides sont rejetés.
+     */
 	 @Test
 	    public void testValidEmail() {
 	        assertTrue(Inscription.isValidEmail("test@example.com"));
@@ -21,6 +34,11 @@ public class LoginTest {
 	    
 	    }
 
+	    /**
+	     * Teste la validation de mot de passe selon les critères de sécurité.
+	     * Vérifie qu'un mot de passe respectant tous les critères est accepté
+	     * et qu'un mot de passe ne respectant pas tous les critères est rejeté.
+	     */
 	    @Test
 	   public void testValidPassword() {
 	        assertTrue(Inscription.isValidPassword("StrongP@ss1"));

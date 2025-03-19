@@ -18,6 +18,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.awt.event.ActionEvent;
 
+/**
+ * Classe gérant la seconde étape de réinitialisation de mot de passe.
+ * Permet à l'utilisateur de changer son mot de passe temporaire
+ * par un nouveau mot de passe personnalisé et sécurisé.
+ * 
+ * @author Equipe de développement
+ * @version 1.0
+ */
 public class Reset2 {
 
 	private JFrame frame;
@@ -27,7 +35,9 @@ public class Reset2 {
 	private static final String DB_URL = "jdbc:sqlite:users.db"; // Change this to your database
 
 	/**
-	 * Launch the application.
+	 * Lance l'application de changement de mot de passe.
+	 * 
+	 * @param args Arguments de ligne de commande (non utilisés)
 	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -43,13 +53,19 @@ public class Reset2 {
 	}
 
 	/**
-	 * Create the application.
+	 * Constructeur de la classe Reset2.
+	 * Initialise l'interface utilisateur de changement de mot de passe.
 	 */
 	public Reset2() {
 		initialize();
 	}
 	
 	
+	/**
+	 * Établit une connexion à la base de données.
+	 * 
+	 * @return Objet Connection pour interagir avec la base de données
+	 */
 	public static Connection connect( ) {
 		 
 		 Connection conn = null;
@@ -68,7 +84,8 @@ public class Reset2 {
 	 
 
 	/**
-	 * Initialize the contents of the frame.
+	 * Initialise les composants de l'interface utilisateur.
+	 * Configure la fenêtre pour le changement de mot de passe.
 	 */
 	private void initialize() {
 		frame = new JFrame();
@@ -115,6 +132,11 @@ public class Reset2 {
 		frame.getContentPane().add(confirmPasswordField);
 	}
 	
+	/**
+	 * Gère le changement de mot de passe.
+	 * Vérifie le mot de passe temporaire, puis met à jour le mot de passe
+	 * avec le nouveau mot de passe confirmé.
+	 */
 	private void changePassword() {
         String tempPassword = new String(tempPasswordField.getPassword()).trim();
         String newPassword = new String(newPasswordField.getPassword()).trim();
@@ -159,7 +181,13 @@ public class Reset2 {
     }
 	
 	
-	// Hash password using SHA-256
+	/**
+	 * Crée un hachage SHA-256 du mot de passe fourni.
+	 * Sécurise le stockage des mots de passe dans la base de données.
+	 * 
+	 * @param password Le mot de passe à hacher
+	 * @return Le mot de passe haché sous forme de chaîne hexadécimale
+	 */
     private String hashPassword(String password) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
@@ -174,6 +202,10 @@ public class Reset2 {
         }
     }
     
+    /**
+     * Rend la fenêtre de changement de mot de passe visible.
+     * Méthode utilisée pour afficher la fenêtre après son initialisation.
+     */
     public void afficher() {
 
 		frame.setVisible(true);

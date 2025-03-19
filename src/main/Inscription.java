@@ -33,15 +33,30 @@ import com.jtattoo.plaf.smart.SmartLookAndFeel; // Choose any theme
 
 //import Design.Connection;
 
+/**
+ * Classe de gestion de l'inscription des utilisateurs.
+ * Permet aux nouveaux utilisateurs de créer un compte en fournissant
+ * un email et un mot de passe sécurisé.
+ * Vérifie la validité des données et enregistre l'utilisateur dans la base de données.
+ * 
+ * @author Equipe de développement
+ * @version 1.0
+ */
 public class Inscription extends JFrame {
 
+	/** Fenêtre principale de l'interface d'inscription */
 	private JFrame frame;
+	/** Champ de saisie pour l'adresse email de l'utilisateur */
 	private JTextField login;
+	/** Champ de saisie sécurisé pour le mot de passe */
 	private JPasswordField mdp;
+	/** Champ de saisie sécurisé pour la confirmation du mot de passe */
 	private JPasswordField mdpConfirmer;
 
 	/**
-	 * Launch the application.
+	 * Lancement the application Tp Authentification via l'Interface d'inscription directement..
+	 * 
+	 * @param args Arguments de ligne de commande (non utilisés)
 	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -62,14 +77,16 @@ public class Inscription extends JFrame {
 
 	
 	/**
+	 * Méthode de connexion à la basse de donnée via le JDBC pour SqLite
 	 * 
-	 * 
-	 * 
-	 * 
-	 * @param password
-	 * @return
+	 * @return Une connexion à la base de données SQLite
 	 */
 	 private static final String DB_URL = "jdbc:sqlite:users.db";
+	 /**
+	  * Établit une connexion à la base de données SQLite.
+	  * 
+	  * @return Objet Connection pour interagir avec la base de données
+	  */
 	 public static Connection connect( ) {	 
 		 Connection conn = null;
 		 try {
@@ -84,8 +101,16 @@ public class Inscription extends JFrame {
 		 return conn;
 	 }
 	 
+	 
+	 	/**
+	 	 * Méthode pour valider les mots de passes en utilisant les Expression réguilere (Regex)
+	 	 * Vérifie que le mot de passe contient au moins 12 caractères,
+	 	 * une majuscule, une minuscule, un chiffre et un caractère spécial.
+	 	 * 
+	 	 * @param password Le mot de passe à valider
+	 	 * @return true si le mot de passe est valide, false sinon
+	 	 */
 	
-	// Méthode pour valider le mot de passe
     static boolean isValidPassword(String password) {
         String regex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()\\-_=+<>?]).{12,}$";
         Pattern pattern = Pattern.compile(regex);
@@ -94,12 +119,12 @@ public class Inscription extends JFrame {
     }
     
     /**
+     * Methode pour valider l'email
+     * Vérifie que l'email respecte un format standard.
      * 
-     * @param email
-     * @return
+     * @param email L'email à valider
+     * @return true si l'email est valide, false sinon
      */
-    
-    // Methode pour valider l'email
     static boolean isValidEmail(String email) {
         String regex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
         Pattern pattern = Pattern.compile(regex);
@@ -107,8 +132,13 @@ public class Inscription extends JFrame {
         return matcher.matches();
     }
 
-    
-    // Method to hash password using SHA-256
+    /**
+     * Method to hash password using SHA-256
+     * Sécurise le mot de passe en le transformant en empreinte SHA-256.
+     * 
+     * @param password Le mot de passe à hacher
+     * @return Le mot de passe haché sous forme de chaîne hexadécimale
+     */
     private static String hashPassword(String password) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
@@ -134,8 +164,8 @@ public class Inscription extends JFrame {
    
 	/**
 	 * Create the application.
-	 * @return 
-	 * @return 
+	 * Constructeur de la classe Inscription.
+	 * Initialise les composants de l'interface utilisateur.
 	 */
 	public  Inscription() {
 		initialize();
@@ -143,6 +173,7 @@ public class Inscription extends JFrame {
 
 	/**
 	 * Initialize the contents of the frame.
+	 * Configure l'interface graphique avec les champs nécessaires à l'inscription.
 	 */
 	private void initialize() {
 		frame = new JFrame();
@@ -286,9 +317,13 @@ public class Inscription extends JFrame {
 	
 
 
-public void afficher() {
-	frame.setVisible(true);
-}
+	/**
+	 * Rend la fenêtre d'inscription visible.
+	 * Méthode utilisée pour afficher la fenêtre après son initialisation.
+	 */
+	public void afficher() {
+		frame.setVisible(true);
+	}
 
 
     }
